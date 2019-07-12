@@ -1,0 +1,9 @@
+
+influx:
+  url: http://102.12.34.4
+  user: admin
+  password: pass
+  database: thing
+
+server:
+  port: 9090
