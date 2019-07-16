@@ -11,6 +11,28 @@ import lombok.Data;
 @Measurement(name = "messages")
 public class Messages {
 
+	public Messages() {}
+	public Messages(
+			String time,
+			String link,
+			String protocol,
+			String unit,
+			String updateTime,
+			String value,
+			String channel,
+			String name,
+			String publisher) {
+		this.time = time;
+		this.link = link;
+		this.protocol = protocol;
+		this.unit = unit;
+		this.updateTime = updateTime;
+		this.value = value;
+		this.channel = channel;
+		this.name = name;
+		this.publisher = publisher;
+	}
+
 	/**
 	 *  InfluxDB中时间戳均是以UTC时保存 
 	 **/
@@ -38,5 +60,4 @@ public class Messages {
 	public String name;
 	@Column(name = "publisher", tag = true)
 	public String publisher;
-
 }

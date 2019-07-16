@@ -11,7 +11,7 @@
 	<groupId>com.bengyun</groupId>
 	<artifactId>webservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>webservice</name>
 	<description>webservice for bengyun</description>
 
