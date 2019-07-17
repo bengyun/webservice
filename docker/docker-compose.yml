@@ -1,0 +1,17 @@
+version: "3"
+
+networks:
+  docker_mainflux-base-net:
+    external: true
+
+services:
+  webservice:
+    image: bengyun/webservice:latest
+    container_name: bengyun-webservice
+    expose:
+      - "8905"
+    ports:
+      - "8905:8905"
+    restart: on-failure
+    networks:
+      - docker_mainflux-base-net

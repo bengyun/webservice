@@ -1,6 +1,6 @@
 
 influx:
-  url: http://47.88.225.240:8086
+  url: http://influxdb:8086
   user: mainflux
   password: mainflux
   database: mainflux
