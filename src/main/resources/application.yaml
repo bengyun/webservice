@@ -7,3 +7,9 @@ influx:
 
 server:
   port: 8905
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%-20thread] %-5level [%-42logger{36}] - %msg%n"
+    file:    "%d{yyyy-MM-dd HH:mm:ss} [%-20thread] %-5level [%-42logger{36}] - %msg%n"
+  file: E:\NIT_G\log.log
