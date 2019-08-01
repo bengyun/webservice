@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bengyun.webservice.bean.QueryMeanValueModel;
-import com.bengyun.webservice.tool.InfluxDbUtils;
+import com.bengyun.webservice.tool.InfluxQLUtils;
 import com.bengyun.webservice.tool.TimeFormatTool;
 
 @RestController
 public class BatteryVoltage {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
-	private InfluxDbUtils influxDbUtils;
+	private InfluxQLUtils influxDbUtils;
 	@Autowired
 	HttpServletRequest request;
 	

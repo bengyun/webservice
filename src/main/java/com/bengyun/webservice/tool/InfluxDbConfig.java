@@ -20,7 +20,12 @@ public class InfluxDbConfig {
     private String database;
 
     @Bean
-    public InfluxDbUtils influxDbUtils() {
-        return new InfluxDbUtils(userName, password, influxDBUrl, database, "");
+    public InfluxQLUtils influxQLUtils() {
+        return new InfluxQLUtils(userName, password, influxDBUrl, database, "");
+    }
+    
+    @Bean
+    public FluxScriptUtils fluxScriptUtils() {
+        return new FluxScriptUtils();
     }
 }

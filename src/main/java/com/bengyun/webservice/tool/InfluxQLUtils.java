@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.bengyun.webservice.bean.QueryMessageModel;
 import com.bengyun.webservice.bean.QueryLastValueModel;
+import com.bengyun.webservice.bean.QueryMaxValueModel;
 import com.bengyun.webservice.bean.QueryMeanValueModel;
 
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import org.slf4j.Logger;
 import lombok.Data;
 
 @Data
-public class InfluxDbUtils {
+public class InfluxQLUtils {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private String userName;
@@ -33,7 +34,7 @@ public class InfluxDbUtils {
 	public static String policyNamePix = "logRetentionPolicy_";
 	public static String RetentionPolicy_Autogen = "autogen";
 
-	public InfluxDbUtils(String userName, String password, String url, String database, String retentionPolicy) {
+	public InfluxQLUtils(String userName, String password, String url, String database, String retentionPolicy) {
 		this.userName = userName;
 		this.password = password;
 		this.url = url;
@@ -124,7 +125,7 @@ public class InfluxDbUtils {
 		strQuery.append("WHERE (\"publisher\" = '" + publisher + "' ");/* publisher */
 		strQuery.append("AND \"name\" = '" + name + "') ");/* name */
 
-		logger.info("Query thing_id: " + publisher);
+		logger.info("Query last " + name + " of thing_id: " + publisher);
 		Query query = new Query(strQuery.toString(), database);/* influxDB API */
 		
 		List<QueryLastValueModel> aLastValueList = new ArrayList<>();
@@ -139,5 +140,37 @@ public class InfluxDbUtils {
 			logger.error("Query failed, error: {}", e.getMessage());
 		}
 		return aLastValueList;
+	}
+	
+	/**
+	 * Query Max Value
+	 * */
+	public List<QueryMaxValueModel> queryMaxData(
+			String publisher,
+			String name,
+			String startTime,
+			String endTime
+			) {
+		StringBuilder strQuery = new StringBuilder();
+		strQuery.append("SELECT MAX(\"value\") FROM \"autogen\".\"messages\" ");/* get last() */
+		strQuery.append("WHERE (\"publisher\" = '" + publisher + "' ");/* publisher */
+		strQuery.append("AND \"name\" = '" + name + "') ");/* name */
+		strQuery.append("AND (time > '" + startTime +"' AND time < '" + endTime + "') ");/* time filter */
+
+		logger.info("Query max " + name + " of thing_id: " + publisher);
+		Query query = new Query(strQuery.toString(), database);/* influxDB API */
+		
+		List<QueryMaxValueModel> aMaxValueList = new ArrayList<>();
+		InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+		try {
+			QueryResult aQueryResult = influxDB.query(query);/* influxDB API */
+			aMaxValueList.addAll(resultMapper.toPOJO(aQueryResult, QueryMaxValueModel.class));/* map result */
+			logger.info("Return " + aMaxValueList.size() + " Of Points");
+		}catch(InfluxDBMapperException e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}catch(Exception e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}
+		return aMaxValueList;
 	}
 }

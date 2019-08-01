@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bengyun.webservice.bean.QueryLastValueModel;
 import com.bengyun.webservice.bean.RequestThingListBean;
 import com.bengyun.webservice.bean.ResponseThingBean;
-import com.bengyun.webservice.tool.InfluxDbUtils;
+import com.bengyun.webservice.tool.InfluxQLUtils;
 
 @RestController
 public class NewestData {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	private InfluxDbUtils influxDbUtils;
+	private InfluxQLUtils influxDbUtils;
 	
 	@Autowired
 	HttpServletRequest request;
