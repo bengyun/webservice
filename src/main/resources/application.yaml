@@ -13,3 +13,9 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%-20thread] %-5level [%-42logger{36}] - %msg%n"
     file:    "%d{yyyy-MM-dd HH:mm:ss} [%-20thread] %-5level [%-42logger{36}] - %msg%n"
   file: E:\NIT_G\log.log
+
+mqtt:
+  broker: tcp://47.88.225.240:1883
+  userName: 510d75f7-cfb4-4874-970d-14541030a917
+  passWord: 1033d3be-fffd-4ecb-94b1-51776a1cbb2b
+  clientId: PumpController

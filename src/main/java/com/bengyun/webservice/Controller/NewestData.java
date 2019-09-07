@@ -41,6 +41,8 @@ public class NewestData {
 			/* query water_level & battery_voltage by thing_id */
 			List<QueryLastValueModel> aLastWaterLevel = influxDbUtils.queryLastData(thing_id, "water_level");
 			List<QueryLastValueModel> aLastBatteryVoltage = influxDbUtils.queryLastData(thing_id, "battery_voltage");
+			List<QueryLastValueModel> aLastPumpStatus = influxDbUtils.queryLastData(thing_id, "pump_status");
+			List<QueryLastValueModel> aLastPumpCurrent = influxDbUtils.queryLastData(thing_id, "pump_current");
 			/* return water_level & water_level_time & battery_voltage & battery_voltage_time */
 			ResponseThingBean aResponseThingBean = new ResponseThingBean();
 			aResponseThingBean.thing_id = thing_id;
@@ -48,6 +50,8 @@ public class NewestData {
 			aResponseThingBean.water_level_time = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getTime();
 			aResponseThingBean.battery_voltage = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getLast();
 			aResponseThingBean.battery_voltage_time = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getTime();
+			aResponseThingBean.pump_status = aLastPumpStatus.size() == 0 ? null : aLastPumpStatus.get(0).getLast();
+			aResponseThingBean.pump_current = aLastPumpCurrent.size() == 0 ? null : aLastPumpCurrent.get(0).getTime();
 			aResponseThingList.add(aResponseThingBean);
 		}
 		return aResponseThingList;
