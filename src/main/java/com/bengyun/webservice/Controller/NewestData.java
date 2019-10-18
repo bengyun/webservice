@@ -34,25 +34,50 @@ public class NewestData {
 	@RequestMapping(value="/newestData", method= RequestMethod.POST)
 	public List<ResponseThingBean> getData(@RequestBody RequestThingListBean thingList) {
 		logger.info(request.getRequestURI());
-		List<String> things = thingList.getThings();
+		List<RequestThingListBean.Thing> things = thingList.getThings();
 		List<ResponseThingBean> aResponseThingList = new ArrayList<>();
 		for(int idx = 0; idx < things.size(); idx++) {
-			String thing_id = things.get(idx);
-			/* query water_level & battery_voltage by thing_id */
-			List<QueryLastValueModel> aLastWaterLevel = influxDbUtils.queryLastData(thing_id, "water_level");
-			List<QueryLastValueModel> aLastBatteryVoltage = influxDbUtils.queryLastData(thing_id, "battery_voltage");
-			List<QueryLastValueModel> aLastPumpStatus = influxDbUtils.queryLastData(thing_id, "pump_status");
-			List<QueryLastValueModel> aLastPumpCurrent = influxDbUtils.queryLastData(thing_id, "pump_current");
-			/* return water_level & water_level_time & battery_voltage & battery_voltage_time */
-			ResponseThingBean aResponseThingBean = new ResponseThingBean();
-			aResponseThingBean.thing_id = thing_id;
-			aResponseThingBean.water_level = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getLast();
-			aResponseThingBean.water_level_time = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getTime();
-			aResponseThingBean.battery_voltage = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getLast();
-			aResponseThingBean.battery_voltage_time = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getTime();
-			aResponseThingBean.pump_status = aLastPumpStatus.size() == 0 ? null : aLastPumpStatus.get(0).getLast();
-			aResponseThingBean.pump_current = aLastPumpCurrent.size() == 0 ? null : aLastPumpCurrent.get(0).getTime();
-			aResponseThingList.add(aResponseThingBean);
+			String thing_id = things.get(idx).thing_id;
+			String thing_type = things.get(idx).thing_type;
+			logger.info(thing_type);
+			logger.info(thing_id);
+			switch (thing_type) {
+				case "manhole":
+				{
+					/* query water_level & battery_voltage by thing_id */
+					List<QueryLastValueModel> aLastWaterLevel = influxDbUtils.queryLastData(thing_id, "water_level");
+					List<QueryLastValueModel> aLastBatteryVoltage = influxDbUtils.queryLastData(thing_id, "battery_voltage");
+					/* return water_level & water_level_time & battery_voltage & battery_voltage_time */
+					ResponseThingBean aResponseThingBean = new ResponseThingBean();
+					aResponseThingBean.thing_id = thing_id;
+					aResponseThingBean.water_level = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getLast();
+					aResponseThingBean.water_level_time = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getTime();
+					aResponseThingBean.battery_voltage = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getLast();
+					aResponseThingBean.battery_voltage_time = aLastBatteryVoltage.size() == 0 ? null : aLastBatteryVoltage.get(0).getTime();
+					aResponseThingBean.pump_status = null;
+					aResponseThingBean.pump_current = null;
+					aResponseThingList.add(aResponseThingBean);
+				}
+					break;
+				case "pump_station":
+				{
+					/* query water_level & battery_voltage by thing_id */
+					List<QueryLastValueModel> aLastWaterLevel = influxDbUtils.queryLastData(thing_id, thing_id + "water_level");
+					List<QueryLastValueModel> aLastPumpStatus = influxDbUtils.queryLastData(thing_id, thing_id + "pump_status");
+					List<QueryLastValueModel> aLastPumpCurrent = influxDbUtils.queryLastData(thing_id, thing_id + "pump_current");
+					/* return water_level & water_level_time & battery_voltage & battery_voltage_time */
+					ResponseThingBean aResponseThingBean = new ResponseThingBean();
+					aResponseThingBean.thing_id = thing_id;
+					aResponseThingBean.water_level = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getLast();
+					aResponseThingBean.water_level_time = aLastWaterLevel.size() == 0 ? null : aLastWaterLevel.get(0).getTime();
+					aResponseThingBean.battery_voltage = null;
+					aResponseThingBean.battery_voltage_time = null;
+					aResponseThingBean.pump_status = aLastPumpStatus.size() == 0 ? null : aLastPumpStatus.get(0).getLast();
+					aResponseThingBean.pump_current = aLastPumpCurrent.size() == 0 ? null : aLastPumpCurrent.get(0).getLast();
+					aResponseThingList.add(aResponseThingBean);
+				}
+					break;
+			}
 		}
 		return aResponseThingList;
 	}

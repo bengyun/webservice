@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.bengyun.webservice.bean.RequestPumpControlBean;
+import com.bengyun.webservice.tool.MqttGateway;
 
 @RestController
 public class PumpControl {
@@ -36,23 +35,61 @@ public class PumpControl {
 	private String clientId;
 
 	@RequestMapping(value="/pumpControl/{channelID}", method= RequestMethod.POST)
-	public void function1(@RequestBody RequestPumpControlBean ctrlCommand, @PathVariable String channelID) {
-		logger.info("Send Pump Command");
-		String topic = "channels/" + channelID + "/messages";
-        String content = JSON.toJSONString(ctrlCommand);
+	public void function1(@RequestBody String ctrlCommand, @PathVariable String channelID) {
+    logger.info("Send Pump Command");
+    logger.info(ctrlCommand);
+    String topic = "channels/" + channelID + "/messages";
+        String content = ctrlCommand;
         try {
         	MqttClient client = new MqttClient(broker, clientId, new MemoryPersistence());
-    		MqttConnectOptions options = new MqttConnectOptions();
-    		options.setCleanSession(true);
-    		options.setUserName(userName);
-    		options.setPassword(passWord.toCharArray());
-    		client.connect(options);
-    		MqttMessage message = new MqttMessage(content.getBytes());
-    		client.publish(topic, message);
-    		client.disconnect();
-			client.close();
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(true);
+        options.setUserName(userName);
+        options.setPassword(passWord.toCharArray());
+        client.connect(options);
+        MqttMessage message = new MqttMessage(content.getBytes());
+        client.publish(topic, message);
+        client.disconnect();
+    	client.close();
         } catch (MqttException e) {
         	logger.error(e.getMessage());
-        } 
+        }
+	}
+
+	/**
+	 * 2019_10_14
+	 * function_20191014_1()
+	 * function_20191014_2()
+	 * add new MQTT sender
+	 * because origin sender always be disconnected with MQTT broker
+	 * */
+	@Autowired
+    MqttGateway mqttGateway;
+	@RequestMapping(value="/pumpControl_20191014/{channelID}", method= RequestMethod.POST)
+	public void function_20191014_1(@PathVariable String channelID, @RequestBody String data) {
+		logger.info("Send MQTT msg to " + channelID);
+        logger.info(data);
+        String topic = "channels/" + channelID + "/messages";
+        mqttGateway.sendToMqtt(topic, data);
+	}
+	@RequestMapping(value="/pumpControl_20191014/{channelID}/{data}", method= RequestMethod.GET)
+	public void function_20191014_2(@PathVariable String channelID, @PathVariable String data) {
+        logger.info("Send MQTT msg to " + channelID);
+        logger.info(data);
+        String topic = "channels/" + channelID + "/messages";
+        mqttGateway.sendToMqtt(topic, data);
+	}
+
+	/**
+	 * 2019_10_15
+	 * function_20191015()
+	 * add new MQTT sender for micro service
+	 * */
+	@RequestMapping(value="/microServiceControl_20191015", method= RequestMethod.POST)
+	public void function_20191015_1(@RequestBody String data) {
+		logger.info("Send MQTT msg to Micro Service");
+        logger.info(data);
+        String topic = "channels/7030fe36-c8bb-4adf-8670-cd670acbf321/messages";
+        mqttGateway.sendToMqtt(topic, data);
 	}
 }

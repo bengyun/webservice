@@ -114,6 +114,41 @@ public class InfluxQLUtils {
 	}
 	
 	/**
+	 * Query As Mean Group By Time
+	 * */
+	public List<QueryMeanValueModel> queryAsMeanTemp(
+			String publisher,
+			String name,
+			String startTime,
+			String endTime,
+			String groupTime,
+			String fill
+			) {
+		StringBuilder strQuery = new StringBuilder();
+		strQuery.append("SELECT MEAN(\"value\") FROM \"autogen\".\"messages\" ");/* get mean() */
+		strQuery.append("WHERE (\"publisher\" = '" + publisher + "' ");/* publisher */
+		strQuery.append("AND (\"name\" = '" + name + "' OR \"name\" = '" + name + "1')) ");/* name */
+		strQuery.append("AND (time > '" + startTime +"' AND time < '" + endTime + "') ");/* time filter */
+		strQuery.append("GROUP BY time(" + groupTime + ") fill(" + fill + ") ");/* group and fill */
+		
+		logger.info("Query " + name + " of thing:" + publisher + " From " + startTime + " To " + endTime);
+		Query query = new Query(strQuery.toString(), database);/* influxDB API */
+
+		List<QueryMeanValueModel> aMeanValueList = new ArrayList<>();
+		InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+		try {
+			QueryResult aQueryResult = influxDB.query(query);/* influxDB API */
+			aMeanValueList.addAll(resultMapper.toPOJO(aQueryResult, QueryMeanValueModel.class));/* map result */
+			logger.info("Return " + aMeanValueList.size() + " Of Points");
+		}catch(InfluxDBMapperException e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}catch(Exception e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}
+		return aMeanValueList;
+	}
+	
+	/**
 	 * Query Last Value
 	 * */
 	public List<QueryLastValueModel> queryLastData(
@@ -156,6 +191,41 @@ public class InfluxQLUtils {
 		strQuery.append("WHERE (\"publisher\" = '" + publisher + "' ");/* publisher */
 		strQuery.append("AND \"name\" = '" + name + "') ");/* name */
 		strQuery.append("AND (time > '" + startTime +"' AND time < '" + endTime + "') ");/* time filter */
+
+		logger.info("Query max " + name + " of thing_id: " + publisher);
+		Query query = new Query(strQuery.toString(), database);/* influxDB API */
+		
+		List<QueryMaxValueModel> aMaxValueList = new ArrayList<>();
+		InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+		try {
+			QueryResult aQueryResult = influxDB.query(query);/* influxDB API */
+			aMaxValueList.addAll(resultMapper.toPOJO(aQueryResult, QueryMaxValueModel.class));/* map result */
+			logger.info("Return " + aMaxValueList.size() + " Of Points");
+		}catch(InfluxDBMapperException e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}catch(Exception e) {
+			logger.error("Query failed, error: {}", e.getMessage());
+		}
+		return aMaxValueList;
+	}
+
+	/**
+	 * Query Max Value
+	 * */
+	public List<QueryMaxValueModel> queryMaxDataGroup(
+			String publisher,
+			String name,
+			String startTime,
+			String endTime,
+			String groupTime,
+			String fill
+			) {
+		StringBuilder strQuery = new StringBuilder();
+		strQuery.append("SELECT MAX(\"value\") FROM \"autogen\".\"messages\" ");/* get last() */
+		strQuery.append("WHERE (\"publisher\" = '" + publisher + "' ");/* publisher */
+		strQuery.append("AND \"name\" = '" + name + "') ");/* name */
+		strQuery.append("AND (time > '" + startTime +"' AND time < '" + endTime + "') ");/* time filter */
+		strQuery.append("GROUP BY time(" + groupTime + ") fill(" + fill + ") ");/* group and fill */
 
 		logger.info("Query max " + name + " of thing_id: " + publisher);
 		Query query = new Query(strQuery.toString(), database);/* influxDB API */

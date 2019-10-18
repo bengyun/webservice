@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bengyun.webservice.bean.QueryMaxValueModel;
 import com.bengyun.webservice.bean.QueryMeanValueModel;
 import com.bengyun.webservice.tool.InfluxQLUtils;
 import com.bengyun.webservice.tool.TimeFormatTool;
 
 @RestController
-public class WaterLevel {
+public class PumpCurrent {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private InfluxQLUtils influxDbUtils;
@@ -28,25 +27,25 @@ public class WaterLevel {
 	/**
 	 * UTC time in request and response
 	 * */
-	@RequestMapping(value="/waterLevel/{publisher}", method= RequestMethod.GET)
+	@RequestMapping(value="/pumpCurrent/{publisher}", method= RequestMethod.GET)
 	public List<QueryMeanValueModel> getData(
 			@PathVariable String publisher
 			) {
 		logger.info("Override 1: " + request.getRequestURI());
 		String startTime = TimeFormatTool.GetUTCTimeString(-24 * 60 * 60 * 1000);/* now - 24h */
 		String endTime = TimeFormatTool.GetUTCTimeString();/* now */
-		String groupTime = "1h";/* group 1h */
-		String fill = "0";/* fill 0 in missing data */
+		String groupTime = "10s";/* group 1h */
+		String fill = "null";/* fill null in missing data */
 		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMean(
 				publisher,
-				"water_level",
+				"pump_current",
 				startTime,
 				endTime,
 				groupTime,
 				fill);
 		return aWaterLevelList;
 	}
-	@RequestMapping(value="/waterLevel/{publisher}/{starttime}", method= RequestMethod.GET)
+	@RequestMapping(value="/pumpCurrent/{publisher}/{starttime}", method= RequestMethod.GET)
 	public List<QueryMeanValueModel> getData(
 			@PathVariable String publisher,
 			@PathVariable String starttime
@@ -55,17 +54,17 @@ public class WaterLevel {
 		String startTime = TimeFormatTool.GetUTCTimeString(starttime);
 		String endTime = TimeFormatTool.GetUTCTimeString();
 		String groupTime = "1h";
-		String fill = "0";
+		String fill = "null";
 		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMean(
 				publisher,
-				"water_level",
+				"pump_current",
 				startTime,
 				endTime,
 				groupTime,
 				fill);
 		return aWaterLevelList;
 	}
-	@RequestMapping(value="/waterLevel/{publisher}/{starttime}/{endtime}", method= RequestMethod.GET)
+	@RequestMapping(value="/pumpCurrent/{publisher}/{starttime}/{endtime}", method= RequestMethod.GET)
 	public List<QueryMeanValueModel> getData(
 			@PathVariable String publisher,
 			@PathVariable String starttime,
@@ -75,37 +74,17 @@ public class WaterLevel {
 		String startTime = TimeFormatTool.GetUTCTimeString(starttime);
 		String endTime = TimeFormatTool.GetUTCTimeString(endtime);
 		String groupTime = "1h";
-		String fill = "0";
+		String fill = "null";
 		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMean(
 				publisher,
-				"water_level",
+				publisher + "pump_current",
 				startTime,
 				endTime,
 				groupTime,
 				fill);
 		return aWaterLevelList;
 	}
-	@RequestMapping(value="/thingIdWaterLevel/{publisher}/{starttime}/{endtime}", method= RequestMethod.GET)
-	public List<QueryMeanValueModel> getDataTemp(
-			@PathVariable String publisher,
-			@PathVariable String starttime,
-			@PathVariable String endtime
-			) {
-		logger.info("Override 3: " + request.getRequestURI());
-		String startTime = TimeFormatTool.GetUTCTimeString(starttime);
-		String endTime = TimeFormatTool.GetUTCTimeString(endtime);
-		String groupTime = "1h";
-		String fill = "0";
-		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMeanTemp(
-				publisher,
-				publisher + "water_level",
-				startTime,
-				endTime,
-				groupTime,
-				fill);
-		return aWaterLevelList;
-	}
-	@RequestMapping(value="/waterLevel/{publisher}/{starttime}/{endtime}/{grouptime}/{fill}", method= RequestMethod.GET)
+	@RequestMapping(value="/pumpCurrent/{publisher}/{starttime}/{endtime}/{grouptime}/{fill}", method= RequestMethod.GET)
 	public List<QueryMeanValueModel> getData(
 			@PathVariable String publisher,
 			@PathVariable String starttime,
@@ -120,57 +99,11 @@ public class WaterLevel {
 		String afill = fill;
 		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMean(
 				publisher,
-				"water_level",
+				"pump_current",
 				startTime,
 				endTime,
 				groupTime,
 				afill);
-		return aWaterLevelList;
-	}
-	
-	/**
-	 * 2019_10_14
-	 * getData_20191016_1()
-	 * get data of 'TIANGU'
-	 * */
-	@RequestMapping(value="/waterLevel_for_tiangu_20191016/{publisher}/{starttime}/{endtime}", method= RequestMethod.GET)
-	public List<QueryMeanValueModel> getData_20191016_1(
-			@PathVariable String publisher,
-			@PathVariable String starttime,
-			@PathVariable String endtime
-			) {
-		logger.info("Override 3: " + request.getRequestURI());
-		String startTime = TimeFormatTool.GetUTCTimeString(starttime);
-		String endTime = TimeFormatTool.GetUTCTimeString(endtime);
-		String groupTime = "1h";
-		String fill = "0";
-		List<QueryMeanValueModel> aWaterLevelList = influxDbUtils.queryAsMean(
-				publisher,
-				publisher + "water_level2",
-				startTime,
-				endTime,
-				groupTime,
-				fill);
-		return aWaterLevelList;
-	}
-	@RequestMapping(value="/pumpstatus_20191016/{publisher}/{starttime}/{endtime}", method= RequestMethod.GET)
-	public List<QueryMaxValueModel> getData_20191016_2(
-			@PathVariable String publisher,
-			@PathVariable String starttime,
-			@PathVariable String endtime
-			) {
-		logger.info("Override 3: " + request.getRequestURI());
-		String startTime = TimeFormatTool.GetUTCTimeString(starttime);
-		String endTime = TimeFormatTool.GetUTCTimeString(endtime);
-		String groupTime = "1h";
-		String fill = "0";
-		List<QueryMaxValueModel> aWaterLevelList = influxDbUtils.queryMaxDataGroup(
-				publisher,
-				publisher + "pump_status",
-				startTime,
-				endTime,
-				groupTime,
-				fill);
 		return aWaterLevelList;
 	}
 }

@@ -5,16 +5,21 @@ import java.util.List;
 public class RequestThingListBean {
 	
 	public RequestThingListBean() {}
-	public RequestThingListBean(List<String> things) {
+	public RequestThingListBean(List<Thing> things) {
 		this.things = things;
 	}
 	
-	private List<String> things;
+	private List<Thing> things;
 
-	public List<String> getThings() {
+	public List<Thing> getThings() {
 		return things;
 	}
-	public void setThings(List<String> things) {
+	public void setThings(List<Thing> things) {
 		this.things = things;
+	}
+	
+	public static class Thing {
+		public String thing_id;
+		public String thing_type;
 	}
 }

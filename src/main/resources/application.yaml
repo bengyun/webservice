@@ -1,12 +1,22 @@
+server:
+  port: 8905
+
+spring:
+  mqtt:
+    username: 4c5ca5b7-a6bb-4ca3-a0eb-a41e2e68c99e
+    password: ea5bdb86-275d-4981-906b-9845b0b034a4
+    url: tcp://121.41.1.169:1883
+    client:
+      id: PumpController_20191014_1
+    default:
+      topic: topic
+    completionTimeout: 3000
 
 influx:
-  url: http://influxdb:8086
+  url: http://121.41.1.169:8086
   user: mainflux
   password: mainflux
   database: mainflux
-
-server:
-  port: 8905
 
 logging:
   pattern:
@@ -15,7 +25,8 @@ logging:
   file: E:\NIT_G\log.log
 
 mqtt:
-  broker: tcp://47.88.225.240:1883
-  userName: 510d75f7-cfb4-4874-970d-14541030a917
-  passWord: 1033d3be-fffd-4ecb-94b1-51776a1cbb2b
+  broker: tcp://121.41.1.169:1883
+  userName: 4c5ca5b7-a6bb-4ca3-a0eb-a41e2e68c99e
+  passWord: ea5bdb86-275d-4981-906b-9845b0b034a4
   clientId: PumpController
+
